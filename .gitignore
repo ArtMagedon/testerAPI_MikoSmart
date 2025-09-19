@@ -1,2 +1,6 @@
-saved_data.json
-text.pu
+# Игнорировать виртуальные окружения
+.venv/
+venv/
+
+test.py
+saced_data.json
