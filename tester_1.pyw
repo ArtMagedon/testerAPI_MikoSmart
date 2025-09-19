@@ -3,7 +3,8 @@ from tkinter import ttk, font
 import json
 import os
 import requests
-
+from ctypes import windll
+windll.shcore.SetProcessDpiAwareness(2)
 
 SAVE_FILE = f"{os.path.abspath(__file__).replace(os.path.basename(__file__), '')}\\saved_data.json"
 
@@ -93,10 +94,23 @@ def save_data():
     with open(SAVE_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
+def create_json_file(n: int = 20, filename: str = "file.json"):
+    data = {"top": "",
+            "fonts": default_fonts,
+            "blocks": []}
+    for i in range(1, n + 1):
+        temp = {"label": f"№{i}",
+            "Method": "GET",
+            "entry": "",
+            "body": ""
+        }
+        data["blocks"].append(temp)
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
 
 def load_fonts():
     if not os.path.exists(SAVE_FILE):
-        return
+        create_json_file(n=TOTAL_ROWS,filename=SAVE_FILE)
     with open(SAVE_FILE, "r", encoding="utf-8") as f:
         data = json.load(f)
     # ==== Загружаем шрифты ====
@@ -158,19 +172,35 @@ def bind_text_scroll(text_widget):
 root = tk.Tk()
 root.title("REST Client GUI (20 блоков с прокруткой)")
 
+
+notebook = ttk.Notebook(root)
+notebook.pack(fill="both", expand=True)
+
+# Создаём вкладку
+tab1 = ttk.Frame(notebook)
+notebook.add(tab1, text="REST Client")
+
+tab2 = ttk.Frame(notebook)
+notebook.add(tab2, text="Config")
+
+# Теперь весь интерфейс будет внутри tab1, а не container
+
+
+
+
 # ===== Верхний ввод базового URL =====
-top_label = tk.Label(root, text="Базовый URL:", font=(
+top_label = tk.Label(tab1, text="Базовый URL:", font=(
     default_fonts["label"]["family"], default_fonts["label"]["size"], default_fonts["label"]["weight"]))
 # текст сверху с небольшим отступом
 top_label.pack(anchor="w", padx=5, pady=(10, 0))
 top_entry_var = tk.StringVar()
-top_entry = tk.Entry(root, textvariable=top_entry_var, width=65)
+top_entry = tk.Entry(tab1, textvariable=top_entry_var, width=65)
 top_entry.pack(anchor="w", padx=5, pady=5)
 add_context_menu(top_entry)
-separator = ttk.Separator(root, orient='horizontal')
+separator = ttk.Separator(tab1, orient='horizontal')
 separator.pack(fill="x", padx=5, pady=5)  # растягиваем по горизонтали
 # ===== Область прокрутки =====
-container = tk.Frame(root)
+container = tk.Frame(tab1)
 container.pack(fill="both", expand=True)
 
 canvas = tk.Canvas(container)
