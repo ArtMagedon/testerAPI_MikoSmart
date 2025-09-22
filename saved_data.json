@@ -1,0 +1,153 @@
+{
+  "top": "http://127.0.0.1:8080",
+  "blocks": [
+    {
+      "label": "№1",
+      "method": "GET",
+      "entry": "/device/capabilities/?id=cefd1c1a&variable=power",
+      "body": ""
+    },
+    {
+      "label": "№2",
+      "method": "POST",
+      "entry": "/device",
+      "body": "{\n    \"name\": \"waterPump\",\n    \"type\": \"reley\",\n    \"capabilities\": {\n        \"power\": \"on\",\n        \"duration\": 128\n        },\n    \"status\": \"off\",\n    \"location\": \"Bathroom\",\n    \"locationID\": \"LvcGapW3\"\n\n}"
+    },
+    {
+      "label": "№3",
+      "method": "DELETE",
+      "entry": "/device/?id=HU6afSjr",
+      "body": ""
+    },
+    {
+      "label": "№4",
+      "method": "GET",
+      "entry": "/device/?id=cefd1c1a",
+      "body": ""
+    },
+    {
+      "label": "№5",
+      "method": "GET",
+      "entry": "",
+      "body": ""
+    },
+    {
+      "label": "№6",
+      "method": "PUT",
+      "entry": "",
+      "body": ""
+    },
+    {
+      "label": "№7",
+      "method": "GET",
+      "entry": "",
+      "body": ""
+    },
+    {
+      "label": "№8",
+      "method": "GET",
+      "entry": "",
+      "body": ""
+    },
+    {
+      "label": "№9",
+      "method": "GET",
+      "entry": "",
+      "body": ""
+    },
+    {
+      "label": "№10",
+      "method": "GET",
+      "entry": "",
+      "body": ""
+    },
+    {
+      "label": "№11",
+      "method": "GET",
+      "entry": "",
+      "body": ""
+    },
+    {
+      "label": "№12",
+      "method": "GET",
+      "entry": "",
+      "body": ""
+    },
+    {
+      "label": "№13",
+      "method": "GET",
+      "entry": "",
+      "body": ""
+    },
+    {
+      "label": "№14",
+      "method": "GET",
+      "entry": "",
+      "body": ""
+    },
+    {
+      "label": "№15",
+      "method": "GET",
+      "entry": "",
+      "body": ""
+    },
+    {
+      "label": "№16",
+      "method": "GET",
+      "entry": "",
+      "body": ""
+    },
+    {
+      "label": "№17",
+      "method": "GET",
+      "entry": "",
+      "body": ""
+    },
+    {
+      "label": "№18",
+      "method": "GET",
+      "entry": "",
+      "body": ""
+    },
+    {
+      "label": "№19",
+      "method": "GET",
+      "entry": "",
+      "body": ""
+    },
+    {
+      "label": "№20",
+      "method": "POST",
+      "entry": "",
+      "body": ""
+    }
+  ],
+  "fonts": {
+    "label": {
+      "family": "Arial",
+      "size": 10,
+      "weight": "bold"
+    },
+    "combo": {
+      "family": "Arial",
+      "size": 10,
+      "weight": "bold"
+    },
+    "entry": {
+      "family": "Consolas",
+      "size": 10
+    },
+    "button": {
+      "family": "Arial",
+      "size": 10
+    },
+    "body": {
+      "family": "Consolas",
+      "size": 10
+    },
+    "output": {
+      "family": "Consolas",
+      "size": 10
+    }
+  }
+}

@@ -10,7 +10,7 @@ SAVE_FILE = f"{os.path.abspath(__file__).replace(os.path.basename(__file__), '')
 
 # === ПАРАМЕТРЫ ===
 TOTAL_ROWS = 20  # Всего блоков
-VISIBLE_ROWS = 4  # Сколько видно сразу
+VISIBLE_ROWS = 3  # Сколько видно сразу
 BLOCK_ROWS = 12  # сколько строк занимает блок
 TEXT_ROWS = 12  # сколько строк отображает блок
 methods = ["GET", "PUT", "POST", "DELETE"]
