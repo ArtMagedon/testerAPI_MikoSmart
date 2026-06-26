@@ -1,2 +1,4 @@
-requests==2.32.4
+requests
 PyQt5
+PyQt5-sip
+PyOpenGL
