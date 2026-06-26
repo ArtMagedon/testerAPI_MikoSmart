@@ -1,28 +1,28 @@
 {
-  "top": "http://127.0.0.1:8080",
+  "top": "",
   "blocks": [
     {
       "label": "№1",
       "method": "GET",
-      "entry": "/device/capabilities/?id=cefd1c1a&variable=power",
+      "entry": "",
       "body": ""
     },
     {
       "label": "№2",
-      "method": "POST",
-      "entry": "/device",
-      "body": "{\n    \"name\": \"waterPump\",\n    \"type\": \"reley\",\n    \"capabilities\": {\n        \"power\": \"on\",\n        \"duration\": 128\n        },\n    \"status\": \"off\",\n    \"location\": \"Bathroom\",\n    \"locationID\": \"LvcGapW3\"\n\n}"
+      "method": "GET",
+      "entry": "",
+      "body": ""
     },
     {
       "label": "№3",
-      "method": "DELETE",
-      "entry": "/device/?id=HU6afSjr",
+      "method": "GET",
+      "entry": "",
       "body": ""
     },
     {
       "label": "№4",
       "method": "GET",
-      "entry": "/device/?id=cefd1c1a",
+      "entry": "",
       "body": ""
     },
     {
@@ -33,7 +33,7 @@
     },
     {
       "label": "№6",
-      "method": "PUT",
+      "method": "GET",
       "entry": "",
       "body": ""
     },
@@ -117,7 +117,7 @@
     },
     {
       "label": "№20",
-      "method": "POST",
+      "method": "GET",
       "entry": "",
       "body": ""
     }
