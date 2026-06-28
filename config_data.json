@@ -1,27 +1,25 @@
 {
-    "config": {
-        "main_url": "mikocloud.duckdns.org"
+  "config": {
+    "main_url": "https://mikocloud.duckdns.org"
+  },
+  "data": [
+    {
+      "title": "First",
+      "url": "/login",
+      "body": "{\n\t\"s\":17\n}",
+      "method": 0
     },
-    "data": [
-        {
-            "url": "",
-            "body": "",
-            "req_type": ""
-        },
-        {
-            "url": "",
-            "body": "",
-            "req_type": ""
-        },
-        {
-            "url": "",
-            "body": "",
-            "req_type": ""
-        },
-        {
-            "url": "",
-            "body": "",
-            "req_type": ""
-        }
-    ]
+    {
+      "title": "Second",
+      "url": "/API/dev",
+      "body": "{\n\t\"s\":\"132\"\n}",
+      "method": 0
+    },
+    {
+      "title": "Block 3",
+      "url": "",
+      "body": "",
+      "method": 0
+    }
+  ]
 }
