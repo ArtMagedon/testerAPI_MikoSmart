@@ -6,7 +6,8 @@ from PyQt5.QtWidgets import (
     QPushButton,
     QTextEdit,
     QGroupBox,
-    QLabel
+    QLabel,
+    QSizePolicy
 )
 
 from PyQt5.QtCore import Qt, pyqtSignal
@@ -21,7 +22,10 @@ class RequestBlock(QGroupBox):
         super().__init__(parent)
         self.box_Height = 200
         print(data)
-        self.setMaximumHeight(260)  # Ограничение высоты
+        self.setSizePolicy(
+            QSizePolicy.Expanding,
+            QSizePolicy.Maximum
+        )           
 
         # ---------- Верхняя строка ----------
         self.req_type_selector = QComboBox()
@@ -62,7 +66,7 @@ class RequestBlock(QGroupBox):
         self.mid_layout.addStretch(1) 
         self.mid_layout.addWidget(self.status_code, 1)
         self.mid_layout.setContentsMargins(6, 0, 0, 0) 
-        #self._hide_status()
+        self._hide_status()
 
         # ---------- Нижняя строка ----------
         self.body_box = QTextEdit()
@@ -126,11 +130,13 @@ class RequestBlock(QGroupBox):
         if self.mid_layout.indexOf(self.status_code) == -1:
             self.mid_layout.addWidget(self.status_code, 1)
             self.status_code.show()
+            self.adjustSize()
 
     def _hide_status(self):
         self.mid_layout.removeWidget(self.status_code)
         self.status_code.hide()
         self.status_code.setText("")
+        self.adjustSize()
 
     def updateUrl(self,main_url):
         self.main_url=main_url

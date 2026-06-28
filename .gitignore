@@ -4,3 +4,5 @@ venv/
 
 test.py
 saced_data.json
+
+__pycache__
