@@ -9,12 +9,14 @@ from PyQt5.QtWidgets import (
     QLabel
 )
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 
 import requests
 
 
 class RequestBlock(QGroupBox):
+    deleteRequested = pyqtSignal(object)
+
     def __init__(self, data: dict, parent=None):
         super().__init__(parent)
         self.box_Height = 200
@@ -60,7 +62,7 @@ class RequestBlock(QGroupBox):
         self.mid_layout.addStretch(1) 
         self.mid_layout.addWidget(self.status_code, 1)
         self.mid_layout.setContentsMargins(6, 0, 0, 0) 
-        self._hide_status()
+        #self._hide_status()
 
         # ---------- Нижняя строка ----------
         self.body_box = QTextEdit()
@@ -70,7 +72,8 @@ class RequestBlock(QGroupBox):
         self.response_box = QTextEdit()
         self.response_box.setPlaceholderText("Response")
         self.response_box.setFixedHeight(self.box_Height)
-
+        self.response_box.setReadOnly(True)
+        
         self.bottom_layout = QHBoxLayout()
         self.bottom_layout.addWidget(self.body_box)
         self.bottom_layout.addWidget(self.response_box)
@@ -83,10 +86,13 @@ class RequestBlock(QGroupBox):
 
         self.update_data(data)
 
-        self.req_type_selector.currentIndexChanged.connect(
-            self._update_combo_style)
+        self.req_type_selector.currentIndexChanged.connect(self._update_combo_style)
         self._update_combo_style()
         self.send_btn.clicked.connect(self.sendReq)
+        self.delete_btn.clicked.connect(self.on_delete)
+        
+    def on_delete(self):
+        self.deleteRequested.emit(self)
 
     def sendReq(self):
         request_data = {

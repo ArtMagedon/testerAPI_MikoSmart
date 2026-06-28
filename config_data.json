@@ -1,6 +1,7 @@
 {
   "config": {
-    "main_url": "https://mikocloud.duckdns.org"
+    "main_url": "https://mikocloud.duckdns.org",
+    "geometry": "01d9d0cb00030000000001e600000070000007d000000494000001e70000008f000007cf0000049300000000000000000a00000001e70000008f000007cf00000493"
   },
   "data": [
     {

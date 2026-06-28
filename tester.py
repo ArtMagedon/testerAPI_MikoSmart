@@ -11,8 +11,9 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QScrollArea,
     QFrame,
+    QTabWidget,
 )
-from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QCloseEvent
 
 from request_block import RequestBlock
 
@@ -37,7 +38,12 @@ class MainWindow(QWidget):
         self.load_data()
 
         self.setMinimumWidth(800)
-        self.resize(800, 600)
+        self.setMinimumHeight(350)
+        self.resize(800, 350)
+
+        geometry = self.data["config"].get("geometry")
+        if geometry:
+            self.restoreGeometry(bytes.fromhex(geometry))
 
         # Контейнер для строки запроса
         self.domen_line = QLineEdit()
@@ -80,6 +86,13 @@ class MainWindow(QWidget):
             self.add_block(self.data["data"][i])
         self.updateUrl()
 
+    def remove_block(self, block):
+        if block in self.blocks:
+            self.blocks.remove(block)
+        self.block_layout.removeWidget(block)
+
+        block.setParent(None)
+        block.deleteLater()
 
     def updateUrl(self):
         for i in self.blocks:
@@ -95,9 +108,12 @@ class MainWindow(QWidget):
         if data:
             block = RequestBlock(data)
         else:
-            data = self.clear_module
+            data = self.clear_module.copy()
             data["title"] = "Block " + str(self.block_layout.count())
             block = RequestBlock(data)
+
+        block.deleteRequested.connect(self.remove_block)
+        
         self.block_layout.insertWidget(self.block_layout.count() - 1, block)
         self.blocks.append(block)
 
@@ -108,8 +124,8 @@ class MainWindow(QWidget):
             self.data = json.load(f)
         if len(self.data["data"]) == 0:
             self.data["data"].append(self.clear_module)
-        print(self.data["config"]["main_url"])
-        print(len(self.data["data"]))
+
+
 
     def save_data(self):
         self.data["config"]["main_url"] = self.domen_line.text()
@@ -120,6 +136,10 @@ class MainWindow(QWidget):
         with open(self.file, "w", encoding="utf-8") as f:
             json.dump(self.data, f, ensure_ascii=False, indent=2)
 
+    def closeEvent(self, event: QCloseEvent):
+        self.data["config"]["geometry"] = bytes(self.saveGeometry()).hex()
+        self.save_data()
+        event.accept()
 
 app = QApplication(sys.argv)
 
