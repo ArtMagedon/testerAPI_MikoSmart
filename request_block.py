@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import (
     QLabel,
     QSizePolicy
 )
+from PyQt5.QtGui import QFont
 
 from PyQt5.QtCore import Qt, pyqtSignal
 
@@ -25,11 +26,11 @@ class RequestBlock(QGroupBox):
         self.setSizePolicy(
             QSizePolicy.Expanding,
             QSizePolicy.Maximum
-        )           
+        )
 
         # ---------- Верхняя строка ----------
-        self.req_type_selector = QComboBox()
-        self.req_type_selector.addItems([
+        self.method_selector = QComboBox()
+        self.method_selector.addItems([
             "GET",
             "POST",
             "PUT",
@@ -55,7 +56,7 @@ class RequestBlock(QGroupBox):
         """)
 
         self.top_layout = QHBoxLayout()
-        self.top_layout.addWidget(self.req_type_selector)
+        self.top_layout.addWidget(self.method_selector)
         self.top_layout.addWidget(self.url_line, 1)
         self.top_layout.addWidget(self.send_btn)
         self.top_layout.addWidget(self.delete_btn)
@@ -63,9 +64,9 @@ class RequestBlock(QGroupBox):
         # ---------- Средняя строка ----------
         self.mid_layout = QHBoxLayout()
         self.status_code = QLabel()
-        self.mid_layout.addStretch(1) 
+        self.mid_layout.addStretch(1)
         self.mid_layout.addWidget(self.status_code, 1)
-        self.mid_layout.setContentsMargins(6, 0, 0, 0) 
+        self.mid_layout.setContentsMargins(6, 0, 0, 0)
         self._hide_status()
 
         # ---------- Нижняя строка ----------
@@ -77,7 +78,7 @@ class RequestBlock(QGroupBox):
         self.response_box.setPlaceholderText("Response")
         self.response_box.setFixedHeight(self.box_Height)
         self.response_box.setReadOnly(True)
-        
+
         self.bottom_layout = QHBoxLayout()
         self.bottom_layout.addWidget(self.body_box)
         self.bottom_layout.addWidget(self.response_box)
@@ -90,11 +91,12 @@ class RequestBlock(QGroupBox):
 
         self.update_data(data)
 
-        self.req_type_selector.currentIndexChanged.connect(self._update_combo_style)
+        self.method_selector.currentIndexChanged.connect(
+            self._update_combo_style)
         self._update_combo_style()
         self.send_btn.clicked.connect(self.sendReq)
         self.delete_btn.clicked.connect(self.on_delete)
-        
+
     def on_delete(self):
         self.deleteRequested.emit(self)
 
@@ -102,22 +104,25 @@ class RequestBlock(QGroupBox):
         request_data = {
             "url": self.main_url+self.url_line.text(),
             "body": self.body_box.toPlainText(),
-            "method": self.req_type_selector.currentIndex(),
+            "method": self.method_selector.currentIndex(),
         }
         print(request_data)
         try:
             if request_data["method"] == 0:
                 resp = requests.get(request_data["url"])
             elif request_data["method"] == 1:
-                resp = requests.post(request_data["url"], data=request_data["body"])
+                resp = requests.post(
+                    request_data["url"], data=request_data["body"])
             elif request_data["method"] == 2:
-                resp = requests.put(request_data["url"], data=request_data["body"])
+                resp = requests.put(
+                    request_data["url"], data=request_data["body"])
             elif request_data["method"] == 3:
-                resp = requests.delete(request_data["url"], data=request_data["body"])
+                resp = requests.delete(
+                    request_data["url"], data=request_data["body"])
             else:
                 resp = None
             if resp is not None:
-                #print(resp.text)
+                # print(resp.text)
                 self._show_status()
                 self.response_box.setPlainText(resp.text)
                 self.status_code.setText(str(resp.status_code))
@@ -138,34 +143,71 @@ class RequestBlock(QGroupBox):
         self.status_code.setText("")
         self.adjustSize()
 
-    def updateUrl(self,main_url):
-        self.main_url=main_url
+    def updateUrl(self, main_url):
+        self.main_url = main_url
         print(self.title(), self.main_url)
 
     def _update_combo_style(self):
-        index = self.req_type_selector.currentIndex()
+        index = self.method_selector.currentIndex()
         colors = ["#4CAF50", "#FF9800", "#2196F3", "#F44336"]
         if 0 <= index < len(colors):
-            self.req_type_selector.setStyleSheet(f"""
+            self.method_selector.setStyleSheet(f"""
                 QComboBox {{
                     color: {colors[index]};
                 }}
             """)
         else:
-            self.req_type_selector.setStyleSheet("")
+            self.method_selector.setStyleSheet("")
 
     def update_data(self, external_data: dict):
         self.setTitle(external_data["title"])
         self.url_line.setText(external_data["url"])
         self.body_box.setText(external_data["body"])
-        self.req_type_selector.setCurrentIndex(external_data["method"])
+        self.method_selector.setCurrentIndex(external_data["method"])
 
     def getData(self):
         return {
             "title": self.title(),
             "url": self.url_line.text(),
             "body": self.body_box.toPlainText(),
-            "method": self.req_type_selector.currentIndex(),
+            "method": self.method_selector.currentIndex(),
         }
-    
-    
+
+    def apply_fonts(self, fonts):
+        self.method_selector.setFont(QFont(fonts["method_selector"]["family"],
+                                           fonts["method_selector"]["size"],
+                                           QFont.Bold if fonts["method_selector"]["weight"] == "bold" else QFont.Normal))
+        self.url_line.setFont(QFont(fonts["url_line"]["family"],
+                                    fonts["url_line"]["size"],
+                                    QFont.Bold if fonts["url_line"]["weight"] == "bold" else QFont.Normal))
+        self.status_code.setFont(QFont(fonts["status_code"]["family"],
+                                       fonts["status_code"]["size"],
+                                    QFont.Bold if fonts["status_code"]["weight"] == "bold" else QFont.Normal))
+        self.send_btn.setFont(QFont(fonts["send_btn"]["family"],
+                                    fonts["send_btn"]["size"],
+                                    QFont.Bold if fonts["send_btn"]["weight"] == "bold" else QFont.Normal))
+        self.delete_btn.setFont(QFont(fonts["send_btn"]["family"],
+                                      fonts["send_btn"]["size"],
+                                    QFont.Bold if fonts["send_btn"]["weight"] == "bold" else QFont.Normal))
+        self.body_box.setFont(QFont(fonts["body_box"]["family"],
+                                    fonts["body_box"]["size"],
+                                    QFont.Bold if fonts["body_box"]["weight"] == "bold" else QFont.Normal))
+        self.response_box.setFont(QFont(fonts["response_box"]["family"],
+                                        fonts["response_box"]["size"],
+                                    QFont.Bold if fonts["response_box"]["weight"] == "bold" else QFont.Normal))
+        self.setFont(QFont(fonts["block_name"]["family"],
+                           fonts["block_name"]["size"],
+                           QFont.Bold if fonts["block_name"]["weight"] == "bold" else QFont.Normal))
+        
+        print(fonts)
+
+    def get_fonts(self):
+        s = [self.method_selector, self.url_line, self.status_code,
+             self.send_btn, self.body_box, self.response_box,]
+        for i in s:
+            font_info = i.fontInfo()
+            print(i)
+            print(font_info.family())        # Название
+            print(font_info.pointSize())     # Размер
+            print(font_info.bold())         # Жирный ли шрифт
+            print(font_info.italic())       # Курсивный ли шрифт

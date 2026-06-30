@@ -1,7 +1,64 @@
 {
-  "geometry": "01d9d0cb00030000000005d40000007c000008f50000051b000005d50000009b000008f40000051a00000000000000000a00000005d50000009b000008f40000051a",
+  "geometry": "01d9d0cb0003000000000444000000ce000007650000052000000445000000ed000007640000051f00000000000000000a0000000445000000ed000007640000051f",
   "tabs": {
     "Tab1": "data.json",
     "Tab2": "data1.json"
+  },
+  "fonts": {
+    "tab_name": {
+      "family": "Arial",
+      "size": 10,
+      "weight": "bold"
+    },
+    "domain_line": {
+      "family": "Consolas",
+      "size": 14,
+      "weight": "normal"
+    },
+    "save_btn": {
+      "family": "Consolas",
+      "size": 14,
+      "weight": "normal"
+    },
+    "add_btn": {
+      "family": "Consolas",
+      "size": 14,
+      "weight": "bold"
+    },
+    "block_name": {
+      "family": "Arial",
+      "size": 10,
+      "weight": "normal"
+    },
+    "method_selector": {
+      "family": "Arial",
+      "size": 10,
+      "weight": "bold"
+    },
+    "url_line": {
+      "family": "Consolas",
+      "size": 12,
+      "weight": "normal"
+    },
+    "status_code": {
+      "family": "Consolas",
+      "size": 12,
+      "weight": "bold"
+    },
+    "send_btn": {
+      "family": "Arial",
+      "size": 12,
+      "weight": "bold"
+    },
+    "body_box": {
+      "family": "Consolas",
+      "size": 10,
+      "weight": "normal"
+    },
+    "response_box": {
+      "family": "Consolas",
+      "size": 10,
+      "weight": "normal"
+    }
   }
 }

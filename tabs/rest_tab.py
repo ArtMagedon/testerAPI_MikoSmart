@@ -6,7 +6,9 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QScrollArea,
     QFrame,
+    
 )
+from PyQt5.QtGui import QFont
 import json
 import os
 
@@ -15,8 +17,9 @@ from request_block import RequestBlock
 
 class RestTab(QWidget):
 
-    def __init__(self, file):
+    def __init__(self, file, fonts):
         super().__init__()
+        self.config={"fonts": fonts}
 
         self.file = file
         self.load_data()
@@ -75,6 +78,7 @@ class RestTab(QWidget):
             self.add_block(block)
 
         self.update_url()
+        self.apply_fonts()
 
     def load_data(self):
         if not os.path.exists(self.file):
@@ -141,3 +145,32 @@ class RestTab(QWidget):
         self.save_to_data()
         with open(self.file, "w", encoding="utf-8") as f:
             json.dump(self.data, f, ensure_ascii=False, indent=2)
+
+    def apply_fonts(self):
+
+        self.domain_line.setFont(QFont(self.config["fonts"]["domain_line"]["family"],
+                                       self.config["fonts"]["domain_line"]["size"],
+                                       QFont.Bold if self.config["fonts"]["domain_line"]["weight"] == "bold" else QFont.Normal))
+        
+        self.save_btn.setFont(QFont(self.config["fonts"]["save_btn"]["family"],
+                                    self.config["fonts"]["save_btn"]["size"],
+                                    QFont.Bold if self.config["fonts"]["save_btn"]["weight"] == "bold" else QFont.Normal))
+        
+        self.add_btn.setFont(QFont(self.config["fonts"]["add_btn"]["family"],
+                                   self.config["fonts"]["add_btn"]["size"],
+                                   QFont.Bold if self.config["fonts"]["add_btn"]["weight"] == "bold" else QFont.Normal))
+        
+        for i in self.blocks:
+            i.apply_fonts(self.config["fonts"])
+
+    def get_fonts(self):
+        s = [self.domain_line, self.save_btn, self.add_btn, self.blocks[0]]
+        for i in s:
+            font_info = i.fontInfo()
+            print(i)
+            print(font_info.family())        # Название
+            print(font_info.pointSize())     # Размер
+            print(font_info.bold())         # Жирный ли шрифт
+            print(font_info.italic())       # Курсивный ли шрифт
+        print(self.blocks[0])
+        self.blocks[0].get_fonts()
