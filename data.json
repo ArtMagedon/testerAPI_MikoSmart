@@ -1,8 +1,5 @@
 {
-  "config": {
-    "main_url": "https://mikocloud.duckdns.org",
-    "geometry": "01d9d0cb000300000000030a00000124000008f4000003e70000030b00000143000008f3000003e600000000000000000a000000030b00000143000008f3000003e6"
-  },
+  "main_url": "https://mikocloud.duckdns.org",
   "data": [
     {
       "title": "First",
@@ -14,6 +11,12 @@
       "title": "Second",
       "url": "/API/dev",
       "body": "{\n\t\"s\":\"132\"\n}",
+      "method": 0
+    },
+    {
+      "title": "Block 3",
+      "url": "",
+      "body": "",
       "method": 0
     }
   ]

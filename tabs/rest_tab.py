@@ -7,16 +7,19 @@ from PyQt5.QtWidgets import (
     QScrollArea,
     QFrame,
 )
+import json
+import os
 
 from request_block import RequestBlock
 
 
 class RestTab(QWidget):
 
-    def __init__(self, data):
+    def __init__(self, file):
         super().__init__()
 
-        self.data = data
+        self.file = file
+        self.load_data()
 
         self.blocks = []
 
@@ -30,7 +33,7 @@ class RestTab(QWidget):
         self.domain_line = QLineEdit()
         self.domain_line.setPlaceholderText("Domain / IP")
         self.domain_line.setText(
-            self.data["config"]["main_url"]
+            self.data["main_url"]
         )
 
         self.save_btn = QPushButton("Save")
@@ -73,6 +76,17 @@ class RestTab(QWidget):
 
         self.update_url()
 
+    def load_data(self):
+        if not os.path.exists(self.file):
+            self.data = {
+                "main_url": "",
+                "data": []
+            }
+            return
+
+        with open(self.file, "r", encoding="utf-8") as f:
+            self.data = json.load(f)
+
     def remove_block(self, block):
 
         if block in self.blocks:
@@ -114,8 +128,7 @@ class RestTab(QWidget):
 
     def save_to_data(self):
 
-        self.data["config"]["main_url"] = \
-            self.domain_line.text()
+        self.data["main_url"] = self.domain_line.text()
 
         self.data["data"] = []
 
@@ -126,3 +139,5 @@ class RestTab(QWidget):
 
     def save_to_file(self):
         self.save_to_data()
+        with open(self.file, "w", encoding="utf-8") as f:
+            json.dump(self.data, f, ensure_ascii=False, indent=2)

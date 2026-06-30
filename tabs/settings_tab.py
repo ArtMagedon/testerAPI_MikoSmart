@@ -7,10 +7,8 @@ from PyQt5.QtWidgets import (
 
 class SettingsTab(QWidget):
 
-    def __init__(self, data):
+    def __init__(self):
         super().__init__()
-
-        self.data = data
 
         layout = QVBoxLayout(self)
 

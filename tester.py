@@ -19,23 +19,28 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.file = os.path.join(
+        self.config_file = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            "config_data.json"
+            "config.json"
         )
 
-        self.load_data()
+        rest_file = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "data.json"
+        )
+
+        self.load_config()
 
         self.setMinimumSize(800, 350)
 
-        geometry = self.data["config"].get("geometry")
-        if geometry:
+        geometry = self.config.get("geometry")
+        if geometry and geometry !="":
             self.restoreGeometry(bytes.fromhex(geometry))
 
         self.tabs = QTabWidget()
 
-        self.rest_tab = RestTab(self.data)
-        self.settings_tab = SettingsTab(self.data)
+        self.rest_tab = RestTab(rest_file)
+        self.settings_tab = SettingsTab()
 
         self.tabs.addTab(self.rest_tab, "REST")
         self.tabs.addTab(self.settings_tab, "Настройки")
@@ -43,27 +48,28 @@ class MainWindow(QWidget):
         layout = QVBoxLayout(self)
         layout.addWidget(self.tabs)
 
-    def load_data(self):
-        if not os.path.exists(self.file):
-            self.data = {
-                "config": {
-                    "main_url": "",
-                },
-                "data": []
+    def load_config(self):
+        if not os.path.exists(self.config_file):
+            self.config = {
+                "geometry": "",
+                "tabs": {}
             }
             return
+        with open(self.config_file, "r", encoding="utf-8") as f:
+            self.config = json.load(f)
 
-        with open(self.file, "r", encoding="utf-8") as f:
-            self.data = json.load(f)
+    def save_config(self):
+        with open(self.config_file, "w", encoding="utf-8") as f:
+            json.dump(self.config, f, ensure_ascii=False, indent=2)
 
     def save_data(self):
-        self.rest_tab.save_to_data()
+        self.save_config()
+        self.rest_tab.save_to_file()
 
-        with open(self.file, "w", encoding="utf-8") as f:
-            json.dump(self.data, f, ensure_ascii=False, indent=2)
+    
 
     def closeEvent(self, event: QCloseEvent):
-        self.data["config"]["geometry"] = bytes(self.saveGeometry()).hex()
+        self.config["geometry"] = bytes(self.saveGeometry()).hex()
         self.save_data()
         event.accept()
 
