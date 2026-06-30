@@ -1,7 +1,6 @@
 import sys
 import os
 import json
-
 from PyQt5.QtWidgets import (
     QApplication,
     QWidget,
@@ -10,29 +9,38 @@ from PyQt5.QtWidgets import (
     QMessageBox,
 )
 
-from PyQt5.QtGui import QCloseEvent, QFont
+from PyQt5.QtGui import QCloseEvent, QFont, QIcon
 
 from tabs.rest_tab import RestTab
 from tabs.settings_tab import SettingsTab
 
 
+#сделать настройку шрифтов, перетаскивание блоков, переименование. сделать вохможность добавлять несколько вкладок
+
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
+        self.setWindowTitle("Miko Smart API Tester")
+
+        icon_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "icon.png"
+        )
+        self.setWindowIcon(QIcon(icon_path))
 
         self.unsaved_changes = False
         self.default_fonts = {
             "tab_name": {"family": "Arial", "size": 10, "weight": "bold"},
 
-            "domain_line": {"family": "Consolas", "size": 10, "weight": "normal"},
-            "save_btn": {"family": "Consolas", "size": 10, "weight": "normal"},
-            "add_btn": {"family": "Consolas", "size": 10, "weight": "normal"},
+            "domain_line": {"family": "Consolas", "size": 12, "weight": "normal"},
+            "save_btn": {"family": "Consolas", "size": 12, "weight": "normal"},
+            "add_btn": {"family": "Consolas", "size": 12, "weight": "normal"},
 
             "block_name": {"family": "Arial", "size": 10, "weight": "normal"},
             "method_selector": {"family": "Arial", "size": 10, "weight": "bold"},
             "url_line": {"family": "Consolas", "size": 10, "weight": "normal"},
-            "status_code": {"family": "Consolas", "size": 10, "weight": "normal"},
-            "send_btn": {"family": "Arial", "size": 10, "weight": "normal"},
+            "status_code": {"family": "Consolas", "size": 10, "weight": "bold"},
+            "send_btn": {"family": "Arial", "size": 10, "weight": "bold"},
             "body_box": {"family": "Consolas", "size": 10, "weight": "normal"},
             "response_box": {"family": "Consolas", "size": 10, "weight": "normal"}
         }
@@ -69,10 +77,7 @@ class MainWindow(QWidget):
         self.apply_fonts()
 
     def apply_fonts(self):
-        self.tabs.tabBar().setFont(QFont(  # type: ignore
-            self.config["fonts"]["tab_name"]["family"], 
-            self.config["fonts"]["tab_name"]["size"], 
-            QFont.Bold if self.config["fonts"]["tab_name"]["weight"] == "bold" else QFont.Normal))
+        self.tabs.tabBar().setFont(self.make_font(self.config["fonts"],"tab_name"))  # type: ignore
 
     def load_config(self):
         if not os.path.exists(self.config_file):
@@ -84,6 +89,11 @@ class MainWindow(QWidget):
             return
         with open(self.config_file, "r", encoding="utf-8") as f:
             self.config = json.load(f)
+
+    def make_font(self, fonts, key):
+        font = fonts[key]
+        weight = QFont.Bold if font["weight"] == "bold" else QFont.Normal
+        return QFont(font["family"], font["size"], weight)
 
     def save_config(self):
         with open(self.config_file, "w", encoding="utf-8") as f:

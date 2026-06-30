@@ -130,6 +130,11 @@ class RestTab(QWidget):
 
         self.blocks.append(block)
 
+    def make_font(self, fonts, key):
+        font = fonts[key]
+        weight = QFont.Bold if font["weight"] == "bold" else QFont.Normal
+        return QFont(font["family"], font["size"], weight)
+
     def save_to_data(self):
 
         self.data["main_url"] = self.domain_line.text()
@@ -148,18 +153,9 @@ class RestTab(QWidget):
 
     def apply_fonts(self):
 
-        self.domain_line.setFont(QFont(self.config["fonts"]["domain_line"]["family"],
-                                       self.config["fonts"]["domain_line"]["size"],
-                                       QFont.Bold if self.config["fonts"]["domain_line"]["weight"] == "bold" 
-                                       else QFont.Normal))
-        self.save_btn.setFont(QFont(self.config["fonts"]["save_btn"]["family"],
-                                    self.config["fonts"]["save_btn"]["size"],
-                                    QFont.Bold if self.config["fonts"]["save_btn"]["weight"] == "bold" 
-                                    else QFont.Normal))
-        self.add_btn.setFont(QFont(self.config["fonts"]["add_btn"]["family"],
-                                   self.config["fonts"]["add_btn"]["size"],
-                                   QFont.Bold if self.config["fonts"]["add_btn"]["weight"] == "bold" 
-                                   else QFont.Normal))
+        self.domain_line.setFont(self.make_font(self.config["fonts"],"domain_line"))
+        self.save_btn.setFont(self.make_font(self.config["fonts"],"save_btn"))
+        self.add_btn.setFont(self.make_font(self.config["fonts"],"add_btn"))
         
         for i in self.blocks:
             i.apply_fonts(self.config["fonts"])

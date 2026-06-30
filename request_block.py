@@ -102,6 +102,11 @@ class RequestBlock(QGroupBox):
     def on_delete(self):
         self.deleteRequested.emit(self)
 
+    def make_font(self, fonts, key):
+        font = fonts[key]
+        weight = QFont.Bold if font["weight"] == "bold" else QFont.Normal
+        return QFont(font["family"], font["size"], weight)
+
     def sendReq(self):
         request_data = {
             "url": self.main_url+self.url_line.text(),
@@ -111,16 +116,16 @@ class RequestBlock(QGroupBox):
         print(request_data)
         try:
             if request_data["method"] == 0:
-                resp = requests.get(request_data["url"])
+                resp = requests.get(request_data["url"], timeout=10)
             elif request_data["method"] == 1:
                 resp = requests.post(
-                    request_data["url"], data=request_data["body"])
+                    request_data["url"], data=request_data["body"], timeout=10)
             elif request_data["method"] == 2:
                 resp = requests.put(
-                    request_data["url"], data=request_data["body"])
+                    request_data["url"], data=request_data["body"], timeout=10)
             elif request_data["method"] == 3:
                 resp = requests.delete(
-                    request_data["url"], data=request_data["body"])
+                    request_data["url"], data=request_data["body"], timeout=10)
             else:
                 resp = None
             if resp is not None:
@@ -208,41 +213,19 @@ class RequestBlock(QGroupBox):
         }
 
     def apply_fonts(self, fonts):
-        self.method_selector.setFont(QFont(fonts["method_selector"]["family"],
-                                           fonts["method_selector"]["size"],
-                                           QFont.Bold if fonts["method_selector"]["weight"] == "bold" else QFont.Normal))
-        self.url_line.setFont(QFont(fonts["url_line"]["family"],
-                                    fonts["url_line"]["size"],
-                                    QFont.Bold if fonts["url_line"]["weight"] == "bold" else QFont.Normal))
-        self.status_code.setFont(QFont(fonts["status_code"]["family"],
-                                       fonts["status_code"]["size"],
-                                       QFont.Bold if fonts["status_code"]["weight"] == "bold" else QFont.Normal))
-        self.send_btn.setFont(QFont(fonts["send_btn"]["family"],
-                                    fonts["send_btn"]["size"],
-                                    QFont.Bold if fonts["send_btn"]["weight"] == "bold" else QFont.Normal))
-        self.delete_btn.setFont(QFont(fonts["send_btn"]["family"],
-                                      fonts["send_btn"]["size"],
-                                      QFont.Bold if fonts["send_btn"]["weight"] == "bold" else QFont.Normal))
-        self.body_box.setFont(QFont(fonts["body_box"]["family"],
-                                    fonts["body_box"]["size"],
-                                    QFont.Bold if fonts["body_box"]["weight"] == "bold" else QFont.Normal))
-        self.response_box.setFont(QFont(fonts["response_box"]["family"],
-                                        fonts["response_box"]["size"],
-                                        QFont.Bold if fonts["response_box"]["weight"] == "bold" else QFont.Normal))
-        self.setFont(QFont(fonts["block_name"]["family"],
-                           fonts["block_name"]["size"],
-                           QFont.Bold if fonts["block_name"]["weight"] == "bold" else QFont.Normal))
+        self.method_selector.setFont(self.make_font(fonts,"method_selector"))
+        self.url_line.setFont(self.make_font(fonts,"url_line"))
+        self.status_code.setFont(self.make_font(fonts,"status_code"))
+        self.send_btn.setFont(self.make_font(fonts,"send_btn"))
+        self.delete_btn.setFont(self.make_font(fonts,"send_btn"))
+        self.body_box.setFont(self.make_font(fonts,"body_box"))
+        self.response_box.setFont(self.make_font(fonts,"response_box"))
+        self.setFont(self.make_font(fonts,"block_name"))
 
-        self._update_tab_width(self.body_box, 
-                               QFont(fonts["body_box"]["family"],
-                                     fonts["body_box"]["size"],
-                                     QFont.Bold if fonts["body_box"]["weight"] == "bold" else QFont.Normal))
-        self._update_tab_width(self.response_box, 
-                               QFont(fonts["response_box"]["family"],
-                                     fonts["response_box"]["size"],
-                                     QFont.Bold if fonts["response_box"]["weight"] == "bold" else QFont.Normal))
+        self._update_tab_width(self.body_box, self.make_font(fonts,"body_box"))
+        self._update_tab_width(self.response_box, self.make_font(fonts,"response_box"))
 
-        print(fonts)
+        #print(fonts)
 
     def get_fonts(self):
         s = [self.method_selector, self.url_line, self.status_code,
