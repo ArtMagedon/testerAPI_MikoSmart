@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import (
     QLabel,
     QSizePolicy
 )
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QFontMetrics
 
 from PyQt5.QtCore import Qt, pyqtSignal
 
@@ -73,6 +73,7 @@ class RequestBlock(QGroupBox):
         self.body_box = QTextEdit()
         self.body_box.setPlaceholderText("Body")
         self.body_box.setFixedHeight(self.box_Height)
+        self.body_box.setAcceptRichText(False)
 
         self.response_box = QTextEdit()
         self.response_box.setPlaceholderText("Response")
@@ -82,6 +83,7 @@ class RequestBlock(QGroupBox):
         self.bottom_layout = QHBoxLayout()
         self.bottom_layout.addWidget(self.body_box)
         self.bottom_layout.addWidget(self.response_box)
+        self.response_box.setTabStopDistance(30)
 
         # ---------- Основной Layout ----------
         layout = QVBoxLayout(self)
@@ -126,10 +128,28 @@ class RequestBlock(QGroupBox):
                 self._show_status()
                 self.response_box.setPlainText(resp.text)
                 self.status_code.setText(str(resp.status_code))
+                self.update_status_code_style()
         except Exception as e:
             self._show_status()
             self.response_box.setPlainText(str(e))
             self.status_code.setText("ERROR")
+            self.status_code.setStyleSheet(f"""
+            QLabel {{
+                color: {"#F44336"};
+            }}
+            """)
+
+    def _update_tab_width(self, text_edit_widget, font):
+        fm = QFontMetrics(font)
+        
+        space_width = fm.width(' ')
+        
+        tab_width = space_width * 2 
+        
+        if tab_width == 0:
+            tab_width = 30
+            
+        text_edit_widget.setTabStopDistance(tab_width)
 
     def _show_status(self):
         if self.mid_layout.indexOf(self.status_code) == -1:
@@ -146,6 +166,20 @@ class RequestBlock(QGroupBox):
     def updateUrl(self, main_url):
         self.main_url = main_url
         print(self.title(), self.main_url)
+
+    def update_status_code_style(self):
+        code = self.status_code.text()
+        colors = ["#2196F3", "#4CAF50", "#FF9800",
+                  "#F44336", "#F44336"]
+        index = int(code[0])-1
+        if 0 <= index < len(colors):
+           self.status_code.setStyleSheet(f"""
+            QLabel {{
+                color: {colors[index]};
+            }}
+            """)
+        else:
+           self.status_code.setStyleSheet("")
 
     def _update_combo_style(self):
         index = self.method_selector.currentIndex()
@@ -182,23 +216,32 @@ class RequestBlock(QGroupBox):
                                     QFont.Bold if fonts["url_line"]["weight"] == "bold" else QFont.Normal))
         self.status_code.setFont(QFont(fonts["status_code"]["family"],
                                        fonts["status_code"]["size"],
-                                    QFont.Bold if fonts["status_code"]["weight"] == "bold" else QFont.Normal))
+                                       QFont.Bold if fonts["status_code"]["weight"] == "bold" else QFont.Normal))
         self.send_btn.setFont(QFont(fonts["send_btn"]["family"],
                                     fonts["send_btn"]["size"],
                                     QFont.Bold if fonts["send_btn"]["weight"] == "bold" else QFont.Normal))
         self.delete_btn.setFont(QFont(fonts["send_btn"]["family"],
                                       fonts["send_btn"]["size"],
-                                    QFont.Bold if fonts["send_btn"]["weight"] == "bold" else QFont.Normal))
+                                      QFont.Bold if fonts["send_btn"]["weight"] == "bold" else QFont.Normal))
         self.body_box.setFont(QFont(fonts["body_box"]["family"],
                                     fonts["body_box"]["size"],
                                     QFont.Bold if fonts["body_box"]["weight"] == "bold" else QFont.Normal))
         self.response_box.setFont(QFont(fonts["response_box"]["family"],
                                         fonts["response_box"]["size"],
-                                    QFont.Bold if fonts["response_box"]["weight"] == "bold" else QFont.Normal))
+                                        QFont.Bold if fonts["response_box"]["weight"] == "bold" else QFont.Normal))
         self.setFont(QFont(fonts["block_name"]["family"],
                            fonts["block_name"]["size"],
                            QFont.Bold if fonts["block_name"]["weight"] == "bold" else QFont.Normal))
-        
+
+        self._update_tab_width(self.body_box, 
+                               QFont(fonts["body_box"]["family"],
+                                     fonts["body_box"]["size"],
+                                     QFont.Bold if fonts["body_box"]["weight"] == "bold" else QFont.Normal))
+        self._update_tab_width(self.response_box, 
+                               QFont(fonts["response_box"]["family"],
+                                     fonts["response_box"]["size"],
+                                     QFont.Bold if fonts["response_box"]["weight"] == "bold" else QFont.Normal))
+
         print(fonts)
 
     def get_fonts(self):
