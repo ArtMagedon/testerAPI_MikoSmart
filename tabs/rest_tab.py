@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import (
     
 )
 from PyQt5.QtGui import QFont
+from PyQt5.QtCore import QEvent, Qt
 import json
 import os
 
@@ -25,6 +26,7 @@ class RestTab(QWidget):
         self.load_data()
 
         self.blocks = []
+        self.drag_block = None
 
         self.clear_module = {
             "title": "",
@@ -98,6 +100,7 @@ class RestTab(QWidget):
 
         self.block_layout.removeWidget(block)
 
+        block.drag_handle.removeEventFilter(self)
         block.deleteLater()
 
     def update_url(self):
@@ -129,6 +132,69 @@ class RestTab(QWidget):
         )
 
         self.blocks.append(block)
+        block.drag_handle.installEventFilter(self)
+
+
+    def eventFilter(self, obj, event):
+        block = None
+
+        for item in self.blocks:
+            if getattr(item, "drag_handle", None) is obj:
+                block = item
+                break
+
+        if block is None:
+            return super().eventFilter(obj, event)
+
+        if event.type() == QEvent.Type.MouseButtonPress and event.button() == Qt.MouseButton.LeftButton:
+            self.drag_block = block
+            block.drag_handle.setCursor(Qt.CursorShape.ClosedHandCursor)
+            return True
+
+        if event.type() == QEvent.Type.MouseMove and self.drag_block is block:
+            self.move_drag_block(event.globalPos())
+            return True
+
+        if event.type() == QEvent.Type.MouseButtonRelease and self.drag_block is block:
+            block.drag_handle.setCursor(Qt.CursorShape.OpenHandCursor)
+            self.drag_block = None
+            return True
+
+        return super().eventFilter(obj, event)
+
+
+    def move_drag_block(self, global_pos):
+        if self.drag_block is None:
+            return
+
+        local_pos = self.blocks_widget.mapFromGlobal(global_pos)
+
+        new_index = len(self.blocks) - 1
+
+        for index, block in enumerate(self.blocks):
+            if block is self.drag_block:
+                continue
+
+            block_middle = block.y() + block.height() // 2
+
+            if local_pos.y() < block_middle:
+                new_index = index
+                break
+
+        old_index = self.blocks.index(self.drag_block)
+
+        if new_index == old_index:
+            return
+
+        self.blocks.pop(old_index)
+
+        if new_index > old_index:
+            new_index -= 1
+
+        self.blocks.insert(new_index, self.drag_block)
+
+        self.block_layout.removeWidget(self.drag_block)
+        self.block_layout.insertWidget(new_index, self.drag_block)
 
     def make_font(self, fonts, key):
         font = fonts[key]

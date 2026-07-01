@@ -7,9 +7,12 @@ from PyQt5.QtWidgets import (
     QTextEdit,
     QGroupBox,
     QLabel,
-    QSizePolicy
+    QSizePolicy,
+    QInputDialog,
+    QStyleOptionGroupBox,
+    QStyle
 )
-from PyQt5.QtGui import QFont, QFontMetrics
+from PyQt5.QtGui import QFont, QFontMetrics, QMouseEvent
 
 from PyQt5.QtCore import Qt, pyqtSignal
 
@@ -29,6 +32,12 @@ class RequestBlock(QGroupBox):
         )
 
         # ---------- Верхняя строка ----------
+        self.drag_handle = QLabel("☰")
+        self.drag_handle.setFixedWidth(24)
+        self.drag_handle.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.drag_handle.setCursor(Qt.CursorShape.OpenHandCursor)
+        self.drag_handle.setObjectName("DragHandle")
+
         self.method_selector = QComboBox()
         self.method_selector.addItems([
             "GET",
@@ -56,6 +65,7 @@ class RequestBlock(QGroupBox):
         """)
 
         self.top_layout = QHBoxLayout()
+        self.top_layout.addWidget(self.drag_handle)
         self.top_layout.addWidget(self.method_selector)
         self.top_layout.addWidget(self.url_line, 1)
         self.top_layout.addWidget(self.send_btn)
@@ -101,6 +111,44 @@ class RequestBlock(QGroupBox):
 
     def on_delete(self):
         self.deleteRequested.emit(self)
+
+    def mousePressEvent(self, event: QMouseEvent):
+        if event.button() == Qt.MouseButton.LeftButton and self._title_rect().contains(event.pos()):
+            self.rename_block()
+            event.accept()
+            return
+
+        super().mousePressEvent(event)
+
+    def _title_rect(self):
+        option = QStyleOptionGroupBox()
+        self.initStyleOption(option)
+
+        style = self.style()
+        if style is None:
+            return self.rect()
+
+        return style.subControlRect(
+            QStyle.ComplexControl.CC_GroupBox,
+            option,
+            QStyle.SubControl.SC_GroupBoxLabel,
+            self
+        )
+
+
+    def rename_block(self):
+        new_title, ok = QInputDialog.getText(
+            self,
+            "Переименование блока",
+            "Новое название:",
+            text=self.title()
+        )
+
+        if ok:
+            new_title = new_title.strip()
+
+            if new_title:
+                self.setTitle(new_title)
 
     def make_font(self, fonts, key):
         font = fonts[key]
